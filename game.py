@@ -22,17 +22,19 @@ class Game:
                 current_player_name = self.player_2_name
             while True:
                 position_choice = input(f"{current_player_name}'s turn =>  ")
-                valid_move = self.game_board.(
+                valid_move = self.game_board.place_piece(
                     current_player, position_choice)
                 if valid_move:
                     break
 
-            move_result = self.game_board.check_board()
-            if move_result:
-                winner_name = self.player_1_name
-                if move_result == 2:
-                    winner_name = self.player_2_name
-                print(f"{winner_name} is the WINNER!")
+            end_result = self.game_board.check_board()
+            if end_result:
+                self.game_board.print_board()
+                if end_result == 3:
+                    print("DRAW!")
+                else:
+                    winner_name = self.player_1_name if end_result == 1 else self.player_2_name
+                    print(f"{winner_name} is the WINNER!")
                 break
             counter += 1
 
@@ -41,7 +43,7 @@ class Game:
         if player == 2:
             current_player = self.player_2_name
         choice = input(f"{current_player}'s turn")
-        self.game_board.(1, choice)
+        self.game_board.place_piece(1, choice)
 
     def end(self):
         print("Print Results")
@@ -53,6 +55,7 @@ class Board:
         self.labels = ["a", "b", "c"]
         self.player = [" X  ", " O  "]  # player 1 is X, player 2 is O
         self.rows = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+        self.moves = 0
 
     def print_board(self):
         row_counter = 0
@@ -73,7 +76,7 @@ class Board:
             print(col_string)
         print("\n")
 
-    def (self, player, position):
+    def place_piece(self, player, position):
         if len(position) != 2:
             return False
         else:
@@ -84,6 +87,7 @@ class Board:
             else:
                 print(f"{position} is already taken. Choose another cell.\n")
                 return False
+            self.moves += 1
             return True
 
     def check_board(self):
@@ -113,7 +117,9 @@ class Board:
                     return False
             return True
 
-        if self.rows[0][0] != 0:  # check S, E, SE
+        if self.moves == 9:
+            return 3
+        elif self.rows[0][0] != 0:  # check S, E, SE
             if check_east(self.rows[0][0], 0, 0):
                 return self.rows[0][0]
             elif check_south(self.rows[0][0], 0, 0):
@@ -134,8 +140,8 @@ class Board:
         elif self.rows[2][0] != 0:  # check E
             if check_east(self.rows[2][0], 2, 0):
                 return self.rows[2][0]
-        else:
-            return False
+
+        return False
 
 
 first_game = Game("Gani", "Nadine")
