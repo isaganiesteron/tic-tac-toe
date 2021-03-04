@@ -1,17 +1,10 @@
-import time
-import random
-
-
 class Game:
     def __init__(self, player_1, player_2):
         self.player_1_name = player_1
         self.player_2_name = player_2
         self.game_board = Board()
 
-        # return label[random.randint(0, 2)]
-
     def start(self):
-        print("********Start********\n\n")
         counter = 1
         while True:
             self.game_board.print_board()
@@ -45,9 +38,6 @@ class Game:
         choice = input(f"{current_player}'s turn")
         self.game_board.place_piece(1, choice)
 
-    def end(self):
-        print("Print Results")
-
 
 class Board:
 
@@ -59,14 +49,17 @@ class Board:
 
     def print_board(self):
         row_counter = 0
-        print("      row a  | row b  | row c ")
+        print("      row a    row b    row c ")
         for row in self.rows:
+
+            if row_counter % 1 == 0 and row_counter != 0:
+                print("        -----+--------+----- ")
             col_counter = 0
             col_string = f"row {self.labels[row_counter]}"
             for col in row:
                 content = "    "
                 if col != 0:
-                    content = self.player[col-1]
+                    content = self.player[col - 1]
                 if col_counter == 1:
                     col_string += f"|  {content}  |"
                 else:
@@ -93,56 +86,62 @@ class Board:
     def check_board(self):
         # check if there is a winner here
 
+        print("check_board")
+
         def check_south(player, row, col):
             for mark in range(2):
-                if self.rows[(row+(mark+1))][col] != player:
+                if self.rows[(row + (mark + 1))][col] != player:
                     return False
             return True
 
         def check_east(player, row, col):
             for mark in range(2):
-                if self.rows[(row)][col+(mark+1)] != player:
+                if self.rows[row][col + (mark + 1)] != player:
                     return False
             return True
 
         def check_south_west(player, row, col):
             for mark in range(2):
-                if self.rows[(row+(mark+1))][col-((mark+1))] != player:
+                if self.rows[(row + (mark + 1))][col - (mark + 1)] != player:
                     return False
             return True
 
         def check_south_east(player, row, col):
             for mark in range(2):
-                if self.rows[(row+(mark+1))][col+(mark+1)] != player:
+                if self.rows[(row + (mark + 1))][col + (mark + 1)] != player:
                     return False
             return True
 
-        if self.moves == 9:
+        if self.moves == 9:  # no more moves possible
             return 3
-        elif self.rows[0][0] != 0:  # check S, E, SE
+
+        if self.rows[0][0] != 0:  # check S, E, SE
             if check_east(self.rows[0][0], 0, 0):
                 return self.rows[0][0]
             elif check_south(self.rows[0][0], 0, 0):
                 return self.rows[0][0]
             elif check_south_east(self.rows[0][0], 0, 0):
                 return self.rows[0][0]
-        elif self.rows[0][1] != 0:  # check S
+
+        if self.rows[0][1] != 0:  # check S
             if check_south(self.rows[0][1], 0, 1):
                 return self.rows[0][1]
-        elif self.rows[0][2] != 0:  # check S, SW
+
+        if self.rows[0][2] != 0:  # check S, SW
             if check_south(self.rows[0][2], 0, 2):
                 return self.rows[0][2]
             elif check_south_west(self.rows[0][2], 0, 2):
                 return self.rows[0][2]
-        elif self.rows[1][0] != 0:  # check E
+
+        if self.rows[1][0] != 0:  # check E
             if check_east(self.rows[1][0], 1, 0):
                 return self.rows[1][0]
-        elif self.rows[2][0] != 0:  # check E
+
+        if self.rows[2][0] != 0:  # check E, NE || SW
             if check_east(self.rows[2][0], 2, 0):
                 return self.rows[2][0]
 
         return False
-
 
 first_game = Game("Gani", "Nadine")
 first_game.start()
