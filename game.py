@@ -17,98 +17,113 @@ class Bot:
                 random_row = random.randint(0, 2)
                 random_col = random.randint(0, 2)
                 if self.current_board[random_row][random_col] == 0:
-                    chosen_cell = labels[random_row]+labels[random_col]
+                    chosen_cell = labels[random_row] + labels[random_col]
                     break
             return chosen_cell
 
+        def _check_line(player, line):
+            line_count = 0
+            line_possibilities = []
+            first = self.current_board[0][0]
+            first_cell = "aa"
+            second = self.current_board[0][1]
+            second_cell = "ab"
+            third = self.current_board[0][2]
+            third_cell = "ac"
+            if line == "row2":
+                first = self.current_board[1][0]
+                first_cell = "aa"
+                second = self.current_board[1][1]
+                second_cell = "ab"
+                third = self.current_board[1][2]
+                third_cell = "ac"
+            elif line == "row3":
+                first = self.current_board[2][0]
+                third_cell = "ca"
+                second = self.current_board[2][1]
+                third_cell = "cb"
+                third = self.current_board[2][2]
+                third_cell = "cc"
+            elif line == "col1":
+                first = self.current_board[0][0]
+                third_cell = "aa"
+                second = self.current_board[1][0]
+                third_cell = "ba"
+                third = self.current_board[2][0]
+                third_cell = "ca"
+            elif line == "col2":
+                first = self.current_board[0][1]
+                third_cell = "ab"
+                second = self.current_board[1][1]
+                third_cell = "bb"
+                third = self.current_board[2][1]
+                third_cell = "cb"
+            elif line == "col3":
+                first = self.current_board[0][2]
+                third_cell = "ac"
+                second = self.current_board[1][2]
+                third_cell = "bc"
+                third = self.current_board[2][2]
+                third_cell = "cc"
+            elif line == "diag1":
+                first = self.current_board[0][0]
+                third_cell = "aa"
+                second = self.current_board[1][1]
+                third_cell = "bb"
+                third = self.current_board[2][2]
+                third_cell = "cc"
+            elif line == "diag2":
+                first = self.current_board[0][2]
+                third_cell = "ac"
+                second = self.current_board[1][1]
+                third_cell = "bb"
+                third = self.current_board[2][0]
+                third_cell = "ca"
+
+            print(f"Checking row 1 for player {player}")
+            if first == player:
+                line_count += 1
+            elif first == 0:
+                line_possibilities.append(first_cell)
+            if second == player:
+                line_count += 1
+            elif second == 0:
+                line_possibilities.append(second_cell)
+            if third == player:
+                line_count += 1
+            elif third == 0:
+                line_possibilities.append(third_cell)
+            print(line_count)
+            print(line_possibilities)
+            if line_count == 2 and len(line_possibilities) == 1:
+                return line_possibilities[0]
+            else:
+                return []
+
         def _check_possible_win(player):
-            # check all rows - 3
             possible_wins = []
-            row_1 = []
-            row_2 = []
-            row_3 = []
-            col_1 = []
-            col_2 = []
-            col_3 = []
-            diag_1 = []
-            diag_2 = []
 
+            # check all 3 rows
             if self.current_board[0][0] == player or self.current_board[0][1] == player or self.current_board[0][2] == player:
-                if self.current_board[0][0] != player and self.current_board[0][0] == 0:
-                    row_1.append("aa")
-                if self.current_board[0][1] != player and self.current_board[0][1] == 0:
-                    row_1.append("ab")
-                if self.current_board[0][2] != player and self.current_board[0][2] == 0:
-                    row_1.append("ac")
-                if len(row_1) == 1:
-                    possible_wins.append(row_1[0])
+                possible_wins += _check_line(player, "row1")
             if self.current_board[1][0] == player or self.current_board[1][1] == player or self.current_board[1][2] == player:
-                if self.current_board[1][0] != player and self.current_board[1][0] == 0:
-                    row_2.append("ba")
-                if self.current_board[1][1] != player and self.current_board[1][1] == 0:
-                    row_2.append("bb")
-                if self.current_board[1][2] != player and self.current_board[1][2] == 0:
-                    row_2.append("bc")
-                if len(row_2) == 1:
-                    possible_wins.append(row_2[0])
+                possible_wins += _check_line(player, "row2")
             if self.current_board[2][0] == player or self.current_board[2][1] == player or self.current_board[2][2] == player:
-                if self.current_board[2][0] != player and self.current_board[2][0] == 0:
-                    row_3.append("ca")
-                if self.current_board[2][1] != player and self.current_board[2][1] == 0:
-                    row_3.append("cb")
-                if self.current_board[2][2] != player and self.current_board[2][2] == 0:
-                    row_3.append("cc")
-                if len(row_3) == 1:
-                    possible_wins.append(row_3[0])
+                possible_wins += _check_line(player, "row3")
 
-            # check all cols - 3
+            # check all 3 cols
             if self.current_board[0][0] == player or self.current_board[1][0] == player or self.current_board[2][0] == player:
-                if self.current_board[0][0] != player and self.current_board[0][0] == 0:
-                    col_1.append("aa")
-                if self.current_board[1][0] != player and self.current_board[1][0] == 0:
-                    col_1.append("ba")
-                if self.current_board[2][0] != player and self.current_board[2][0] == 0:
-                    col_1.append("ca")
-                if len(col_1) == 1:
-                    possible_wins.append(col_1[0])
+                possible_wins += _check_line(player, "col1")
             if self.current_board[0][1] == player or self.current_board[1][1] == player or self.current_board[2][1] == player:
-                if self.current_board[0][1] != player and self.current_board[0][1] == 0:
-                    col_2.append("ab")
-                if self.current_board[1][1] != player and self.current_board[1][1] == 0:
-                    col_2.append("bb")
-                if self.current_board[2][1] != player and self.current_board[2][1] == 0:
-                    col_2.append("cb")
-                if len(col_2) == 1:
-                    possible_wins.append(col_2[0])
+                possible_wins += _check_line(player, "col2")
             if self.current_board[0][2] == player or self.current_board[1][2] == player or self.current_board[2][2] == player:
-                if self.current_board[0][2] != player and self.current_board[0][2] == 0:
-                    col_3.append("ac")
-                if self.current_board[1][2] != player and self.current_board[1][2] == 0:
-                    col_3.append("bc")
-                if self.current_board[2][2] != player and self.current_board[2][2] == 0:
-                    col_3.append("cc")
-                if len(col_3) == 1:
-                    possible_wins.append(col_3[0])
+                possible_wins += _check_line(player, "col3")
 
-            # check diagonals - 2
+            # check 2 diagonals
             if self.current_board[0][0] == player or self.current_board[1][1] == player or self.current_board[2][2] == player:
-                if self.current_board[0][0] != player and self.current_board[0][0] == 0:
-                    diag_1.append("aa")
-                if self.current_board[1][1] != player and self.current_board[1][1] == 0:
-                    diag_1.append("bb")
-                if self.current_board[2][2] != player and self.current_board[2][2] == 0:
-                    diag_1.append("cc")
-                if len(diag_1) == 1:
-                    possible_wins.append(diag_1[0])
+                possible_wins += _check_line(player, "diag1")
             if self.current_board[2][0] == player or self.current_board[1][1] == player or self.current_board[0][2] == player:
-                if self.current_board[2][0] != player and self.current_board[2][0] == 0:
-                    diag_2.append("ca")
-                if self.current_board[1][1] != player and self.current_board[1][1] == 0:
-                    diag_2.append("bb")
-                if self.current_board[0][2] != player and self.current_board[0][2] == 0:
-                    diag_2.append("ac")
-                if len(diag_2) == 1:
-                    possible_wins.append(diag_2[0])
+                possible_wins += _check_line(player, "diag2")
 
             return possible_wins
 
@@ -117,10 +132,13 @@ class Bot:
 
         print(f"Defensive moves: {defense} Offensive moves: {offense}")
         if len(defense) > 0:
+            print(f"taking defense => {defense[0]}")
             return defense[0]
         elif len(offense) > 0:
+            print(f"taking offense => {offense[0]}")
             return offense[0]
         else:
+            print(f"taking random move => ")
             return _make_random_move()
 
 
