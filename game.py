@@ -6,18 +6,24 @@ class Bot:
         self.marker_bot = marker
         self.marker_opponent = 1 if marker == 2 else 2
         self.current_board = []
+        self.labels = ["a", "b", "c"]
 
     def make_move(self, current_board):
         self.current_board = current_board
 
+        def _check_if_available(cell):
+            row = self.labels.index(cell[0])
+            col = self.labels.index(cell[1])
+            print(f"checking row{row} col{col}")
+            return self.current_board[row][col] == "O"
+
         def _make_random_move():
-            labels = ["a", "b", "c"]
             chosen_cell = ""
             while True:
                 random_row = random.randint(0, 2)
                 random_col = random.randint(0, 2)
                 if self.current_board[random_row][random_col] == 0:
-                    chosen_cell = labels[random_row] + labels[random_col]
+                    chosen_cell = self.labels[random_row] + self.labels[random_col]
                     break
             return chosen_cell
 
@@ -39,48 +45,47 @@ class Bot:
                 third_cell = "ac"
             elif line == "row3":
                 first = self.current_board[2][0]
-                third_cell = "ca"
+                first_cell = "ca"
                 second = self.current_board[2][1]
-                third_cell = "cb"
+                second_cell = "cb"
                 third = self.current_board[2][2]
                 third_cell = "cc"
             elif line == "col1":
                 first = self.current_board[0][0]
-                third_cell = "aa"
+                first_cell = "aa"
                 second = self.current_board[1][0]
-                third_cell = "ba"
+                second_cell = "ba"
                 third = self.current_board[2][0]
                 third_cell = "ca"
             elif line == "col2":
                 first = self.current_board[0][1]
-                third_cell = "ab"
+                first_cell = "ab"
                 second = self.current_board[1][1]
-                third_cell = "bb"
+                second_cell = "bb"
                 third = self.current_board[2][1]
                 third_cell = "cb"
             elif line == "col3":
                 first = self.current_board[0][2]
-                third_cell = "ac"
+                first_cell = "ac"
                 second = self.current_board[1][2]
-                third_cell = "bc"
+                second_cell = "bc"
                 third = self.current_board[2][2]
                 third_cell = "cc"
             elif line == "diag1":
                 first = self.current_board[0][0]
-                third_cell = "aa"
+                first_cell = "aa"
                 second = self.current_board[1][1]
-                third_cell = "bb"
+                second_cell = "bb"
                 third = self.current_board[2][2]
                 third_cell = "cc"
             elif line == "diag2":
                 first = self.current_board[0][2]
-                third_cell = "ac"
+                first_cell = "ac"
                 second = self.current_board[1][1]
-                third_cell = "bb"
+                second_cell = "bb"
                 third = self.current_board[2][0]
                 third_cell = "ca"
 
-            print(f"Checking row 1 for player {player}")
             if first == player:
                 line_count += 1
             elif first == 0:
@@ -93,10 +98,9 @@ class Bot:
                 line_count += 1
             elif third == 0:
                 line_possibilities.append(third_cell)
-            print(line_count)
-            print(line_possibilities)
+
             if line_count == 2 and len(line_possibilities) == 1:
-                return line_possibilities[0]
+                return line_possibilities
             else:
                 return []
 
@@ -104,25 +108,33 @@ class Bot:
             possible_wins = []
 
             # check all 3 rows
-            if self.current_board[0][0] == player or self.current_board[0][1] == player or self.current_board[0][2] == player:
+            if self.current_board[0][0] == player or self.current_board[0][1] == player or self.current_board[0][
+                2] == player:
                 possible_wins += _check_line(player, "row1")
-            if self.current_board[1][0] == player or self.current_board[1][1] == player or self.current_board[1][2] == player:
+            if self.current_board[1][0] == player or self.current_board[1][1] == player or self.current_board[1][
+                2] == player:
                 possible_wins += _check_line(player, "row2")
-            if self.current_board[2][0] == player or self.current_board[2][1] == player or self.current_board[2][2] == player:
+            if self.current_board[2][0] == player or self.current_board[2][1] == player or self.current_board[2][
+                2] == player:
                 possible_wins += _check_line(player, "row3")
 
             # check all 3 cols
-            if self.current_board[0][0] == player or self.current_board[1][0] == player or self.current_board[2][0] == player:
+            if self.current_board[0][0] == player or self.current_board[1][0] == player or self.current_board[2][
+                0] == player:
                 possible_wins += _check_line(player, "col1")
-            if self.current_board[0][1] == player or self.current_board[1][1] == player or self.current_board[2][1] == player:
+            if self.current_board[0][1] == player or self.current_board[1][1] == player or self.current_board[2][
+                1] == player:
                 possible_wins += _check_line(player, "col2")
-            if self.current_board[0][2] == player or self.current_board[1][2] == player or self.current_board[2][2] == player:
+            if self.current_board[0][2] == player or self.current_board[1][2] == player or self.current_board[2][
+                2] == player:
                 possible_wins += _check_line(player, "col3")
 
             # check 2 diagonals
-            if self.current_board[0][0] == player or self.current_board[1][1] == player or self.current_board[2][2] == player:
+            if self.current_board[0][0] == player or self.current_board[1][1] == player or self.current_board[2][
+                2] == player:
                 possible_wins += _check_line(player, "diag1")
-            if self.current_board[2][0] == player or self.current_board[1][1] == player or self.current_board[0][2] == player:
+            if self.current_board[2][0] == player or self.current_board[1][1] == player or self.current_board[0][
+                2] == player:
                 possible_wins += _check_line(player, "diag2")
 
             return possible_wins
@@ -130,13 +142,29 @@ class Bot:
         defense = _check_possible_win(self.marker_opponent)
         offense = _check_possible_win(self.marker_bot)
 
-        print(f"Defensive moves: {defense} Offensive moves: {offense}")
-        if len(defense) > 0:
-            print(f"taking defense => {defense[0]}")
-            return defense[0]
-        elif len(offense) > 0:
+        if len(offense) > 0:
             print(f"taking offense => {offense[0]}")
-            return offense[0]
+            valid_move = False
+            for offense_move in offense:
+                if _check_if_available(offense_move):
+                    valid_move = offense_move
+            if valid_move:
+                return valid_move
+            else:
+                print("all move defense were taken, do random move")
+                return _make_random_move()
+        elif len(defense) > 0:
+            print(f"taking defense => {defense[0]}")
+            valid_move = False
+            for defense_move in defense:
+                if _check_if_available(defense_move):
+                    valid_move = defense_move
+                    break
+            if valid_move:
+                return valid_move
+            else:
+                print("all move defense were taken, do random move")
+                return _make_random_move()
         else:
             print(f"taking random move => ")
             return _make_random_move()
@@ -297,5 +325,5 @@ class Board:
         return False
 
 
-first_game = Game("Gani", "Robot")
+first_game = Game("Robot", "Robot")
 first_game.start()
